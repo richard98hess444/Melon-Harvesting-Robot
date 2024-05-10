@@ -1,0 +1,51 @@
+<launch>
+  <arg name="camera"              default="camera"/>
+  <arg name="align_depth"         default="true"/>
+  <arg name="enable_gyro"         default="true"/>
+  <arg name="enable_accel"        default="true"/>
+  <arg name="unite_imu_method"    default="linear_interpolation"/>
+  <arg name="depth_width"         default="640"/>
+  <arg name="depth_height"        default="480"/>
+  <arg name="depth_fps"           default="30"/>
+  <arg name="color_width"         default="640"/>
+  <arg name="color_height"        default="480"/>
+  <arg name="color_fps"           default="30"/>
+
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="align_depth"              value="$(arg align_depth)"/>
+    <arg name="enable_gyro"              value="$(arg enable_gyro)"/>
+    <arg name="enable_accel"             value="$(arg enable_accel)"/>
+    <arg name="unite_imu_method"         value="$(arg unite_imu_method)"/>
+    <arg name="depth_width"              value="$(arg depth_width)"/>
+    <arg name="depth_height"             value="$(arg depth_height)"/>
+    <arg name="depth_fps"                value="$(arg depth_fps)"/>
+    <arg name="color_width"              value="$(arg color_width)"/>
+    <arg name="color_height"             value="$(arg color_height)"/>
+    <arg name="color_fps"                value="$(arg color_fps)"/>
+  </include>
+
+
+  <arg name="rtabmap_viz"             default="true" />
+  <arg name="args"                    default="--delete_db_on_start"/>
+  <arg name="rgb_topic"               default="/camera/color/image_raw"/>
+  <arg name="depth_topic"             default="/camera/aligned_depth_to_color/image_raw"/>
+  <arg name="camera_info_topic"       default="/camera/color/camera_info"/>
+  <arg name="imu_topic"               default="/camera/imu"/>
+  <include file="$(find rtabmap_launch)/launch/rtabmap.launch">
+    <arg name="rtabmap_viz"         value="$(arg rtabmap_viz)"/>
+    <arg name="args"                value="$(arg args)"/>
+    <arg name="rgb_topic"           value="$(arg rgb_topic)"/>
+    <arg name="depth_topic"         value="$(arg depth_topic)"/>
+    <arg name="camera_info_topic"   value="$(arg camera_info_topic)"/>
+    <arg name="imu_topic"           value="$(arg imu_topic)"/>
+  </include>
+
+  <!-- <include file="$(find tm5-900-moveit_config)/launch/demo.launch"/> -->
+  <include file="$(find tm5-900-moveit_config)/launch/tm5-900_moveit_planning_execution.launch"/>
+  <node name="turtle_tf_listener" pkg="robot_control_pkg" type="robot_info_sender.py" output="log"/>
+  <node name="phontype_sender_exmaple_node" pkg="robot_control_pkg" type="phonotype_sender_example.py" output="log"/>
+  <node name="greenhouse_demo" pkg="melon" type="greenhouse_demo.py" output="screen"/>
+
+
+</launch>
+
